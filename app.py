@@ -9,7 +9,7 @@ import plotly.graph_objects as go
 from PyPDF2 import PdfReader
 
 #TogetherAI API key
-client = Together(api_key="2f9578a2cd37cbed0e838815645995334ffc14793a8db525114f048e31e677ed")
+client = Together(api_key="Your Together AI API key")
 
 # Function to analyze security data with TogetherAI
 def analyze_security_data(data):
