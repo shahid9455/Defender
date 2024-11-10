@@ -4,12 +4,11 @@ import socket
 import random
 import time
 import numpy as np
-import wmi
 from together import Together
 import plotly.graph_objects as go
 from PyPDF2 import PdfReader
 
-# Initialize TogetherAI client with API key
+#TogetherAI API key
 client = Together(api_key="2f9578a2cd37cbed0e838815645995334ffc14793a8db525114f048e31e677ed")
 
 # Function to analyze security data with TogetherAI
@@ -53,14 +52,20 @@ def read_pdf(file):
     except Exception as e:
         return f"Error reading PDF file: {e}"
 
-# Function to get system's local IP address and MAC address using WMI
+# Function to get system's local IP address and MAC address using psutil (Cross-platform solution)
 def get_system_ip_and_mac():
-    w = wmi.WMI()
-    for interface in w.Win32_NetworkAdapterConfiguration(IPEnabled=True):
-        ip_address = interface.IPAddress[0]
-        mac_address = interface.MACAddress
-        return ip_address, mac_address
-    return None, None
+    ip_address = None
+    mac_address = None
+
+    # Get system's network interfaces
+    for interface, addrs in psutil.net_if_addrs().items():
+        for addr in addrs:
+            if addr.family == socket.AF_INET:  # Use socket.AF_INET to check for IPv4
+                ip_address = addr.address
+            if addr.family == psutil.AF_LINK:  # Use psutil.AF_LINK to check for MAC address
+                mac_address = addr.address
+    
+    return ip_address, mac_address
 
 # Function to retrieve currently connected IPs using psutil
 def get_connected_ips():
@@ -96,7 +101,7 @@ def display_3d_security_layers(layer_data):
 
 # Main function to manage layout and updates
 def display_security_dashboard():
-    st.title("Real-Time Cybersecurity Dashboard")
+    st.title("Defender")
     st.write("A dashboard to help you monitor and secure your system in real-time.")
 
     # **File Upload and Malware Detection**
